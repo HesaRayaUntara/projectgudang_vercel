@@ -43,7 +43,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:3700/masuk', {
+      const response = await fetch('http://localhost:3700/masuk',  {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -64,7 +64,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
         onClose();
         window.location.reload();
       } else {
-        alert('Data gagal ditambah');
+        message.error('Data gagal ditambah');
       }
     } catch (error) {
       alert('Terjadi kesalahan saat menambah data');

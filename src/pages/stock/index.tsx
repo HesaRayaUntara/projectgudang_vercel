@@ -8,8 +8,9 @@ import {
   HomeOutlined,
   FileAddOutlined,
   ExportOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import type { MenuProps } from 'antd';
+import { Dropdown, MenuProps, Spin } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import Link from 'next/link';
 import router, { useRouter } from 'next/router';
@@ -49,7 +50,6 @@ const items: MenuItem[] = [
   getItem('Barang Masuk', '3', <FileAddOutlined />, undefined, '/masuk'),
   getItem('Barang Keluar', '4', <ExportOutlined />, undefined, '/keluar'),
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
-  getItem('Logout', '6', <LogoutOutlined />, undefined, '/login'),
 ];
 
 interface DataMasuk {
@@ -61,13 +61,21 @@ interface DataMasuk {
   keterangan: string;
 }
 
+interface DataUser {
+  name: string;
+  lastLoginAt: Date;
+}
+
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [dataMasuk, setDataMasuk] = useState<DataMasuk[]>([]);
   const [editData, setEditData] = useState<DataMasuk>({ idbarang: '', idsupplier: '', nama_barang: '', keterangan: '', nama_supplier: '', jumlah: 0 });
-
-const handlePrintPDF = () => {
+  const [dataUser, setDataUser] = useState<DataUser[]>([]);
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+  
+  const handlePrintPDF = () => {
   const doc = new jsPDF();
 
   // Membuat judul halaman
@@ -119,9 +127,6 @@ const handlePrintPDF = () => {
     editData: DataMasuk; // Menghapus 'Partial'
   }
 
-  useEffect(() => {
-    fetchAllMasuk();
-  }, []);
 
   async function fetchAllMasuk() {
     const res = await fetch('http://localhost:3700/masuk', {
@@ -134,6 +139,78 @@ const handlePrintPDF = () => {
     } else {
       alert('error fetching');
     }
+  }
+  
+  async function fetchAllUser() {
+    const res = await fetch('http://localhost:3700/auth/login', {
+      method: 'GET',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setDataUser(data);
+      console.log(data);
+    } else {
+      alert('error fetching');
+    }
+  }
+
+
+  useEffect(() => {
+    fetchAllMasuk();
+    fetchAllUser();
+
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoggedIn(false);
+      router.push('/login');
+    } else {
+      setLoggedIn(true);
+    }
+  
+    // Simulating the component loading process
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoading(true); // Set isLoading to true before logout
+    setLoggedIn(false);
+    router.push('/login');
+  };
+
+  const menuItems = dataUser.map((item) => (
+    <Menu.Item key={item.name}>
+      <a className='flex items-center'>
+        <UserOutlined className='mr-1'/>{item.name}
+      </a>
+    </Menu.Item>
+  ));
+  
+  const menu = (
+    <Menu>
+      {menuItems}
+      <Menu.Divider />
+      <Menu.Item key="4" danger onClick={handleLogout}>
+        <a className='flex items-center'>
+          <LogoutOutlined className='mr-1'/>Log out
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
+  }
+
+  if (!loggedIn) {
+    router.replace('/login');
+    return null;
   }
 
   return (
@@ -148,7 +225,17 @@ const handlePrintPDF = () => {
         <Menu theme="dark" defaultSelectedKeys={['2']} mode="inline" items={items} />
       </Sider>
       <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+      <Header style={{ padding: 0, background: colorBgContainer }}>
+                <div className="flex items-center justify-end">
+                  <div className="relative font-medium right-10">
+                    <Dropdown overlay={menu} trigger={['click']}>
+                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                        Administrator ▾
+                      </a>
+                    </Dropdown>
+                  </div>
+                </div>
+              </Header>
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item className='text-3xl font-semibold'>Stock Barang</Breadcrumb.Item>

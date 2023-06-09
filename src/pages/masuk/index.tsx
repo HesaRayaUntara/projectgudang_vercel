@@ -10,8 +10,9 @@ import {
   HomeOutlined,
   FileAddOutlined,
   ExportOutlined,
+  UserOutlined,
 } from '@ant-design/icons';
-import { MenuProps, Modal, message } from 'antd';
+import { Dropdown, MenuProps, Modal, Spin, message } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import Link from 'next/link';
 import router, { useRouter } from 'next/router';
@@ -53,7 +54,6 @@ const items: MenuItem[] = [
   getItem('Barang Masuk', '3', <FileAddOutlined />, undefined, '/masuk'),
   getItem('Barang Keluar', '4', <ExportOutlined />, undefined, '/keluar'),
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
-  getItem('Logout', '6', <LogoutOutlined />, undefined, '/login'),
 ];
 
 interface DataMasuk {
@@ -67,22 +67,22 @@ interface DataMasuk {
   penerima: string;
 }
 
+interface DataUser {
+  name: string;
+  lastLoginAt: Date;
+}
+
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [dataMasuk, setDataMasuk] = useState<DataMasuk[]>([]);
-  const [editData, setEditData] = useState<DataMasuk>({
-    idbarang: '',
-    idsupplier: '',
-    tanggal: '',
-    nama_barang: '',
-    keterangan: '',
-    nama_supplier: '',
-    konfir_jumlah: 0,
-    penerima: '',
-  });
+  const [editData, setEditData] = useState<DataMasuk>({ idbarang: '', idsupplier: '', tanggal: '', nama_barang: '', keterangan: '', nama_supplier: '', konfir_jumlah: 0, penerima: '', });
+  const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const router = useRouter();
+  const [loggedIn, setLoggedIn] = useState(true);
+  const [isLoading, setIsLoading] = useState(true);
+
   const {
     token: { colorBgContainer },
   } = theme.useToken();
@@ -156,6 +156,33 @@ const App: React.FC = () => {
     doc.save('data_barang_masuk.pdf');
   };
 
+  async function fetchAllMasuk() {
+    const res = await fetch('http://localhost:3700/masuk', {
+      method: 'GET',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setDataMasuk(data);
+      console.log(data);
+    } else {
+      alert('error fetching');
+    }
+  }
+
+  
+  async function fetchAllUser() {
+    const res = await fetch('http://localhost:3700/auth/login', {
+      method: 'GET',
+    });
+    if (res.ok) {
+      const data = await res.json();
+      setDataUser(data);
+      console.log(data);
+    } else {
+      alert('error fetching');
+    }
+  }
+
   const handleDelete = async (idbarang: string | null) => {
     if (idbarang) {
       try {
@@ -192,20 +219,62 @@ const App: React.FC = () => {
 
   useEffect(() => {
     fetchAllMasuk();
-  }, []);
+    fetchAllUser();
 
-  async function fetchAllMasuk() {
-    const res = await fetch('http://localhost:3700/masuk', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataMasuk(data);
-      console.log(data);
+    const token = localStorage.getItem('token');
+    if (!token) {
+      setLoggedIn(false);
+      router.push('/login');
     } else {
-      alert('error fetching');
+      setLoggedIn(true);
     }
+  
+    // Simulating the component loading process
+    setTimeout(() => {
+      setIsLoading(false);
+    }, 1000);
+  }, []);
+  
+  const handleLogout = () => {
+    localStorage.removeItem('token');
+    setIsLoading(true); // Set isLoading to true before logout
+    setLoggedIn(false);
+    router.push('/login');
+  };
+
+  const menuItems = dataUser.map((item) => (
+    <Menu.Item key={item.name}>
+      <a className='flex items-center'>
+        <UserOutlined className='mr-1'/>{item.name}
+      </a>
+    </Menu.Item>
+  ));
+  
+  const menu = (
+    <Menu>
+      {menuItems}
+      <Menu.Divider />
+      <Menu.Item key="4" danger onClick={handleLogout}>
+        <a className='flex items-center'>
+          <LogoutOutlined className='mr-1'/>Log out
+        </a>
+      </Menu.Item>
+    </Menu>
+  );
+
+  if (isLoading) {
+    return (
+      <div className="flex items-center justify-center h-screen">
+        <Spin size="large" />
+      </div>
+    );
   }
+
+  if (!loggedIn) {
+    router.replace('/login');
+    return null;
+  }
+
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -218,9 +287,18 @@ const App: React.FC = () => {
         </Link>
         <Menu theme="dark" defaultSelectedKeys={['3']} mode="inline" items={items} />
       </Sider>
-
       <Layout className="site-layout">
-        <Header style={{ padding: 0, background: colorBgContainer }} />
+      <Header style={{ padding: 0, background: colorBgContainer }}>
+                <div className="flex items-center justify-end">
+                  <div className="relative font-medium right-10">
+                    <Dropdown overlay={menu} trigger={['click']}>
+                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                        Administrator ▾
+                      </a>
+                    </Dropdown>
+                  </div>
+                </div>
+              </Header>
         <Content style={{ margin: '0 16px' }}>
           <Breadcrumb style={{ margin: '16px 0' }}>
             <Breadcrumb.Item className='text-3xl font-semibold'>Barang Masuk</Breadcrumb.Item>
