@@ -3,6 +3,7 @@ import { CloseOutlined } from '@ant-design/icons';
 import supplier from '../supplier';
 import { Select, Space, DatePicker, message } from 'antd';
 import type { DatePickerProps, RangePickerProps } from 'antd/es/date-picker';
+import moment from 'moment';
 
 interface ModalFormProps {
   onClose: () => void;
@@ -17,8 +18,8 @@ interface DataSupplier {
 const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   const [namaBarang, setNamaBarang] = useState('');
   const [keterangan, setKeterangan] = useState('');
-  const [jumlah, setJumlah] = useState('');
-  const [konfirJumlah, setKonfirJumlah] = useState('');
+  const [jumlah, setJumlah] = useState(0);
+  const [konfirJumlah, setKonfirJumlah] = useState(0);
   const [penerima, setPenerima] = useState('');
   const [tanggal, setTanggal] = useState<any>(null);
   const [namaSupplier, setNamaSupplier] = useState('');
@@ -31,7 +32,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
 
   const handleTambahBarang = async () => {
     try {
-      // Temukan objek barang berdasarkan ID barang yang dipilih
       const selectedSupply = supplierData.find((item) => item.idsupplier === idSupplier);
       if (!selectedSupply) {
         message.error('Supplier tidak ditemukan');
@@ -43,18 +43,20 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
         return;
       }
 
-      const response = await fetch('http://localhost:3700/masuk',  {
+      const tanggal = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
+      const response = await fetch('http://localhost:3700/masuk', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
         },
+        mode: 'cors',
         body: JSON.stringify({
           nama_barang: namaBarang,
-          jumlah: jumlah,
-          konfir_jumlah: konfirJumlah,
+          jumlah: Number(jumlah),
+          konfir_jumlah: Number(konfirJumlah),
           penerima: penerima,
           nama_supplier: selectedSupply.nama_supplier,
-          tanggal: tanggal?.format('YYYY-MM-DD HH:mm:ss'),
+          tanggal: tanggal,
           keterangan: keterangan,
         }),
       });
@@ -72,7 +74,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   };
 
   useEffect(() => {
-    // Fetch data from the "supplier" table
     const fetchData = async () => {
       try {
         const response = await fetch('http://localhost:3700/supplier');
@@ -114,19 +115,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
     }
   };
 
-  const handleNamaSupplierChange = (value: string) => {
-    setNamaSupplier(value);
 
-    // Temukan ID barang berdasarkan nama supplier yang dipilih
-    const selectedSupply = supplierData.find((item) => item.nama_supplier === value);
-    if (selectedSupply) {
-      setIdSupplier(selectedSupply.idsupplier);
-    }
-  };
-
-  const handleDatePickerChange = (date: any, dateString: string) => {
-    setTanggal(date);
-  };
 
   return (
     <div
@@ -156,11 +145,11 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
                 </div>
                 <div className="p-4 -mt-6">
                   <div className='font-semibold mb-2'><label htmlFor="jumlah">Jumlah</label></div>
-                  <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" onChange={(e) => setJumlah(e.target.value)} required />
+                  <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" onChange={(e) => setJumlah(Number(e.target.value))} required />
                 </div>
                 <div className="p-4 -mt-6">
                   <div className='font-semibold mb-2'><label htmlFor="konfirjumlah">Konfirmasi Jumlah</label></div>
-                  <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="konfirjumlah" name="konfirjumlah" min="1" onChange={(e) => setKonfirJumlah(e.target.value)} required />
+                  <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="konfirjumlah" name="konfirjumlah" min="1" onChange={(e) => setKonfirJumlah(Number(e.target.value))} required />
                 </div>
                 <div className="p-4 -mt-6">
                   <div className='font-semibold mb-2'><label htmlFor="penerima">Penerima</label></div>
@@ -168,9 +157,9 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
                 </div>
               </div>
               <div className="flex-1 -ml-4">
-              {/* <div className="p-4">
+                {/* <div className="p-4">
                   <div className='font-semibold mb-1.5'><label htmlFor="tanggal">Tanggal</label></div>
-                  <DatePicker className="w-full p-2 rounded border" showTime format="YYYY-MM-DD HH:mm:ss" onChange={handleDatePickerChange} />
+                  <DatePicker className="w-full p-2 rounded border" showTime format="YYYY-MM-DD HH:mm:ss" onChange={(date) => setTanggal(date)} />
                 </div> */}
                 <div className="p-4 -mt-7">
                   <div className='font-semibold mb-3'><label htmlFor="supply">Supplier</label></div>
@@ -178,13 +167,13 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
                     <Select
                       placeholder="Pilih Supplier"
                       style={{ width: 288 }}
-                      onChange={handleNamaSupplierChange}
+                      onChange={(value) => setIdSupplier(value.toString())}
                       id='supply'
-                      value={namaSupplier || undefined}
+                      value={idSupplier}
                     >
                       {supplierData.length > 0 ? (
                         supplierData.map((item) => (
-                          <Option key={item.idsupplier} value={item.nama_supplier}>
+                          <Option key={item.idsupplier} value={item.idsupplier}>
                             {item.nama_supplier}
                           </Option>
                         ))

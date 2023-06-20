@@ -7,7 +7,7 @@ interface ModalFormProps {
     idsupplier: string;
     nama_supplier: string;
     alamat: string;
-    telepon: number;
+    telepon: string;
   };
 }
 
@@ -37,7 +37,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
         alert('Terjadi kesalahan saat mengubah data');
       }
     }
-    onClose(); // Tutup modal form
+    onClose();
   };
 
   useEffect(() => {
@@ -52,7 +52,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
     setShowModal(false);
     setTimeout(() => {
       onClose();
-    }, 500); // Mengatur jeda sebelum memanggil onClose()
+    }, 500);
   };
 
 
@@ -86,7 +86,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="telepon">Telepon</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="number" id="telepon"name="telepon" placeholder='Telepon' value={updatedData.telepon} required onChange={(e) => setUpdatedData({ ...updatedData, telepon: parseInt(e.target.value) })}/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="number" id="telepon"name="telepon" placeholder='Telepon' value={updatedData.telepon} required onChange={(e) => setUpdatedData({ ...updatedData, telepon: e.target.value })}/>
             </div>
             <div className="p-4 text-right -mt-5">
               <button type="submit" className="bg-green-500 text-white p-2 px-4 rounded hover:bg-green-600">

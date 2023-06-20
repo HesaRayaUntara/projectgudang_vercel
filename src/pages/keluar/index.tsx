@@ -75,7 +75,14 @@ const App: React.FC = () => {
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [dataKeluar, setDataKeluar] = useState<DataKeluar[]>([]);
-  const [editData, setEditData] = useState<DataKeluar>({ idbarang: '', idkeluar: '', tanggal: '', nama_barang: '', penerima: '', jumlah: 0});
+  const [editData, setEditData] = useState<DataKeluar>({
+    idbarang: '',
+    idkeluar: '',
+    tanggal: '',
+    nama_barang: '',
+    penerima: '',
+    jumlah: 0
+  });
   const [isTableEmpty, setIsTableEmpty] = useState(true);
   const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const [loggedIn, setLoggedIn] = useState(true);
@@ -98,7 +105,6 @@ const App: React.FC = () => {
     setEditData(data);
     setShowEditModal(true);
   };
-  
 
   const handleCloseEditModal = () => {
     setShowEditModal(false);
@@ -106,9 +112,8 @@ const App: React.FC = () => {
 
   interface ModalFormProps {
     onClose: () => void;
-    editData: DataKeluar; // Menghapus 'Partial'
+    editData: DataKeluar;
   }
-
 
   const handlePrintPDF = () => {
     const doc = new jsPDF();
@@ -131,9 +136,9 @@ const App: React.FC = () => {
   
     // Mencetak tabel menggunakan autoTable
     doc.autoTable({
-      head: [tableData[0]], // Menggunakan array di dalam array agar baris header tetap sesuai dengan baris body
+      head: [tableData[0]],
       body: tableData.slice(1),
-      startY: 25, // Menyesuaikan nilai startY untuk memberikan ruang yang cukup antara judul dan tabel
+      startY: 25,
       theme: 'grid',
     });
   
@@ -155,7 +160,6 @@ const App: React.FC = () => {
     }
   }
 
-  
   async function fetchAllUser() {
     const res = await fetch('http://localhost:3700/auth/login', {
       method: 'GET',

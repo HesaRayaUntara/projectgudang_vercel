@@ -59,7 +59,7 @@ interface DataSupplier {
   idsupplier: string;
   nama_supplier: string;
   alamat: string;
-  telepon: number;
+  telepon: string;
 }
 
 interface DataUser {
@@ -72,7 +72,12 @@ const App: React.FC = () => {
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [dataSupplier, setDataSupplier] = useState<DataSupplier[]>([]);
-  const [editData, setEditData] = useState<DataSupplier>({ idsupplier: '', nama_supplier: '', alamat: '', telepon: 0});
+  const [editData, setEditData] = useState<DataSupplier>({
+    idsupplier: '',
+    nama_supplier: '',
+    alamat: '',
+    telepon: ''
+  });
   const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(true);
@@ -91,8 +96,8 @@ const App: React.FC = () => {
   };
 
   const handleOpenEditModal = (data: DataSupplier) => {
-    setEditData(data); // Set data yang akan diedit
-    setShowEditModal(true); // Buka modal form
+    setEditData(data);
+    setShowEditModal(true);
   };
   
   const handleCloseEditModal = () => {
@@ -101,7 +106,7 @@ const App: React.FC = () => {
   
   interface ModalFormProps {
     onClose: () => void;
-    editData: DataSupplier; // Menghapus 'Partial'
+    editData: DataSupplier;
   }
   
   const handlePrintPDF = () => {
@@ -125,9 +130,9 @@ const App: React.FC = () => {
   
     // Mencetak tabel menggunakan autoTable
     doc.autoTable({
-      head: [tableData[0]], // Menggunakan array di dalam array agar baris header tetap sesuai dengan baris body
+      head: [tableData[0]],
       body: tableData.slice(1),
-      startY: 25, // Menyesuaikan nilai startY untuk memberikan ruang yang cukup antara judul dan tabel
+      startY: 25,
       theme: 'grid',
     });
   
@@ -196,8 +201,6 @@ const App: React.FC = () => {
       onOk: () => handleDelete(idsupplier),
     });
   };
-  
-  
 
   useEffect(() => {
     fetchAllSupplier();
@@ -211,7 +214,6 @@ const App: React.FC = () => {
       setLoggedIn(true);
     }
   
-    // Simulating the component loading process
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -219,7 +221,7 @@ const App: React.FC = () => {
   
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsLoading(true); // Set isLoading to true before logout
+    setIsLoading(true);
     setLoggedIn(false);
     router.push('/login');
   };
@@ -256,7 +258,7 @@ const App: React.FC = () => {
     router.replace('/login');
     return null;
   }
-  
+
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -292,7 +294,6 @@ const App: React.FC = () => {
                 <button className="bg-blue-500 text-white p-2 px-4 rounded mb-2 hover:bg-blue-600" onClick={handleOpenTambahModal}>
                   Tambah Supplier
                 </button>
-
                 <button className="bg-green-500 text-white p-2 px-3 rounded mb-2 hover:bg-green-600" onClick={handlePrintPDF}>
                   <span style={{ display: 'flex', alignItems: 'center' }}>
                     <FilePdfOutlined className='mr-2' />

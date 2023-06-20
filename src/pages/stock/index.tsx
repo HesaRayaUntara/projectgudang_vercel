@@ -18,7 +18,6 @@ import EditStockModal from '@/pages/components/editstock';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
-
 const { Header, Content, Footer, Sider } = Layout;
 
 type MenuItem = Required<MenuProps>['items'][number];
@@ -114,8 +113,8 @@ const App: React.FC = () => {
   const router = useRouter();
 
   const handleOpenEditModal = (data: DataMasuk) => {
-    setEditData(data); // Set data yang akan diedit
-    setShowEditModal(true); // Buka modal form
+    setEditData(data);
+    setShowEditModal(true);
   };
   
   const handleCloseEditModal = () => {
@@ -124,7 +123,7 @@ const App: React.FC = () => {
   
   interface ModalFormProps {
     onClose: () => void;
-    editData: DataMasuk; // Menghapus 'Partial'
+    editData: DataMasuk;
   }
 
 
@@ -154,7 +153,6 @@ const App: React.FC = () => {
     }
   }
 
-
   useEffect(() => {
     fetchAllMasuk();
     fetchAllUser();
@@ -167,7 +165,6 @@ const App: React.FC = () => {
       setLoggedIn(true);
     }
   
-    // Simulating the component loading process
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -175,7 +172,7 @@ const App: React.FC = () => {
   
   const handleLogout = () => {
     localStorage.removeItem('token');
-    setIsLoading(true); // Set isLoading to true before logout
+    setIsLoading(true);
     setLoggedIn(false);
     router.push('/login');
   };
@@ -248,7 +245,6 @@ const App: React.FC = () => {
               Cetak PDF
             </span>
           </button>
-
 
           {showEditModal && <EditStockModal onClose={handleCloseEditModal} editData={editData} />}
           <div className='overflow-x-auto'>

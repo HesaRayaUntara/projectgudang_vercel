@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { CloseOutlined } from '@ant-design/icons';
 import { Select, Space, DatePicker, message } from 'antd';
+import moment from 'moment';
 
 interface DataMasuk {
   jumlah: number;
@@ -15,7 +16,7 @@ interface TambahKeluarModalProps {
 
 const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
   const [namaBarang, setNamaBarang] = useState('');
-  const [jumlah, setJumlah] = useState<string>('');
+  const [jumlah, setJumlah] = useState<number | ''>('');
   const [penerima, setPenerima] = useState('');
   const [tanggal, setTanggal] = useState<any>(null);
   const [masuk, setMasuk] = useState<DataMasuk[]>([]);
@@ -33,12 +34,18 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
         return;
       }
       
-      if (parseInt(jumlah) > selectedBarang.jumlah) {
+      const jumlahNumber = Number(jumlah);
+      if (isNaN(jumlahNumber) || jumlahNumber <= 0) {
+        message.error('Jumlah tidak valid');
+        return;
+      }
+  
+      if (jumlahNumber > selectedBarang.jumlah) {
         message.error('Jumlah tidak mencukupi');
         return;
       }  
       
-  
+      const tanggal = moment().tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss');
       const response = await fetch('http://localhost:3700/keluar', {
         method: 'POST',
         headers: {
@@ -46,12 +53,12 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
         },
         body: JSON.stringify({
           nama_barang: selectedBarang.nama_barang,
-          jumlah: jumlah,
+          jumlah: jumlahNumber,
           penerima: penerima,
-          tanggal: tanggal?.format('YYYY-MM-DD HH:mm:ss'),
+          tanggal: tanggal,
         }),
       });
-
+  
       if (response.ok) {
         alert('Data berhasil ditambah');
         onClose();
@@ -63,6 +70,7 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
       alert('Terjadi kesalahan saat menambah data');
     }
   };
+  
 
   useEffect(() => {
     // Fetch data from the "masuk" table
@@ -157,7 +165,7 @@ return (
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="jumlah">Jumlah</label></div>
-              <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" value={jumlah} onChange={(e) => setJumlah(e.target.value)} required />
+              <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" value={jumlah} onChange={(e) => setJumlah(Number(e.target.value))} required />
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="penerima">Penerima</label></div>

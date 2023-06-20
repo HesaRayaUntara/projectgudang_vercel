@@ -77,7 +77,16 @@ const App: React.FC = () => {
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
   const [dataMasuk, setDataMasuk] = useState<DataMasuk[]>([]);
-  const [editData, setEditData] = useState<DataMasuk>({ idbarang: '', idsupplier: '', tanggal: '', nama_barang: '', keterangan: '', nama_supplier: '', konfir_jumlah: 0, penerima: '', });
+  const [editData, setEditData] = useState<DataMasuk>({
+    idbarang: '',
+    idsupplier: '',
+    tanggal: '',
+    nama_barang: '',
+    keterangan: '',
+    nama_supplier: '',
+    konfir_jumlah: 0,
+    penerima: '',
+  });
   const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(true);
@@ -96,8 +105,8 @@ const App: React.FC = () => {
   };
 
   const handleOpenEditModal = (data: DataMasuk) => {
-    setEditData(data); // Set data yang akan diedit
-    setShowEditModal(true); // Buka modal form
+    setEditData(data);
+    setShowEditModal(true);
   };
 
   const handleCloseEditModal = () => {
@@ -106,7 +115,7 @@ const App: React.FC = () => {
 
   interface ModalFormProps {
     onClose: () => void;
-    editData: DataMasuk; // Menghapus 'Partial'
+    editData: DataMasuk;
   }
 
   const handlePrintPDF = () => {
@@ -229,7 +238,6 @@ const App: React.FC = () => {
       setLoggedIn(true);
     }
   
-    // Simulating the component loading process
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
@@ -306,17 +314,10 @@ const App: React.FC = () => {
           <div style={{ padding: 24, minHeight: 360, background: colorBgContainer }}>
             <div className="container mx-auto">
               <div className="flex justify-between items-center">
-                <button
-                  className="bg-blue-500 text-white p-2 px-4 rounded mb-2 hover:bg-blue-600"
-                  onClick={handleOpenTambahModal}
-                >
+                <button className="bg-blue-500 text-white p-2 px-4 rounded mb-2 hover:bg-blue-600" onClick={handleOpenTambahModal}>
                   Tambah Barang
                 </button>
-
-                <button
-                  className="bg-green-500 text-white p-2 px-3 rounded mb-2 hover:bg-green-600"
-                  onClick={handlePrintPDF}
-                >
+                <button className="bg-green-500 text-white p-2 px-3 rounded mb-2 hover:bg-green-600" onClick={handlePrintPDF}>
                   <span style={{ display: 'flex', alignItems: 'center' }}>
                     <FilePdfOutlined className='mr-2' />
                     Cetak PDF

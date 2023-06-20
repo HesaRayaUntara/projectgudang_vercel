@@ -10,7 +10,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   const [alamat, setAlamat] = useState('');
   const [telepon, setTelepon] = useState('');
   const [showModal, setShowModal] = useState(false);
-
   
   const handleTambahBarang = async () => {
     try {

@@ -214,7 +214,6 @@ const App: React.FC = () => {
                   </div>
                 </div>
               </Header>
-
                 <Content style={{ margin: '0 16px' }}>
                   <Breadcrumb style={{ margin: '16px 0' }}>
                     <Breadcrumb.Item className="text-3xl font-semibold">Dashboard</Breadcrumb.Item>
