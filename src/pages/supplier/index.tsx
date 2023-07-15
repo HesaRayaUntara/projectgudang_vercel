@@ -55,32 +55,11 @@ const items: MenuItem[] = [
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
 ];
 
-interface DataSupplier {
-  idsupplier: string;
-  nama_supplier: string;
-  alamat: string;
-  telepon: string;
-}
-
-interface DataUser {
-  name: string;
-  lastLoginAt: Date;
-}
-
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [dataSupplier, setDataSupplier] = useState<DataSupplier[]>([]);
-  const [editData, setEditData] = useState<DataSupplier>({
-    idsupplier: '',
-    nama_supplier: '',
-    alamat: '',
-    telepon: ''
-  });
-  const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const router = useRouter();
-  const [loggedIn, setLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   
   const {
@@ -103,10 +82,6 @@ const App: React.FC = () => {
     setShowEditModal(false);
   };
   
-  interface ModalFormProps {
-    onClose: () => void;
-  }
-  
   const handlePrintPDF = () => {
     const doc = new jsPDF();
   
@@ -121,10 +96,7 @@ const App: React.FC = () => {
     tableData.push(headers);
   
     // Menambahkan data dari state dataMasuk ke dalam array tabel
-    dataSupplier.forEach((item, index) => {
-      const rowData = [index + 1, item.nama_supplier, item.alamat, item.telepon];
-      tableData.push(rowData);
-    });
+
   
     // Mencetak tabel menggunakan autoTable
     doc.autoTable({
@@ -138,25 +110,6 @@ const App: React.FC = () => {
     doc.save('data_supplier.pdf');
   };
   
-  const handleDelete = async (idsupplier: string | null) => {
-    if (idsupplier) {
-      try {
-        const response = await fetch(`http://localhost:3700/supplier/${idsupplier}`, {
-          method: 'DELETE',
-        });
-  
-        if (response.ok) {
-          const updatedDataSupplier = dataSupplier.filter((data) => data.idsupplier !== idsupplier);
-          setDataSupplier(updatedDataSupplier);
-          message.success('Data Berhasil Dihapus');
-        } else {
-          message.success('Data Berhasil Dihapus');
-        }
-      } catch (error) {
-        alert('Terjadi kesalahan saat menghapus data');
-      }
-    }
-  };
 
   const handleDeleteConfirmation = () => {
     Modal.confirm({
@@ -226,7 +179,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-end">
                   <div className="relative font-medium right-10">
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      <a className="ant-dropdown-link">
                         Administrator ▾
                       </a>
                     </Dropdown>
@@ -253,7 +206,7 @@ const App: React.FC = () => {
             </div>
 
             {showTambahModal && <TambahSupplierModal onClose={handleCloseTambahModal} />}
-            {showEditModal && <EditSupplierModal onClose={handleCloseEditModal} editData={editData} />}
+            {showEditModal && <EditSupplierModal onClose={handleCloseEditModal} />}
             <div className='overflow-x-auto'>
             <div>
             <table className='w-full min-w-[800px]'>

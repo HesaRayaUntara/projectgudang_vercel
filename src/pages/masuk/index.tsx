@@ -56,38 +56,10 @@ const items: MenuItem[] = [
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
 ];
 
-interface DataMasuk {
-  idbarang: string;
-  idsupplier: string;
-  tanggal: string;
-  keterangan: string;
-  nama_barang: string;
-  konfir_jumlah: number;
-  nama_supplier: string;
-  penerima: string;
-}
-
-interface DataUser {
-  name: string;
-  lastLoginAt: Date;
-}
-
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [dataMasuk, setDataMasuk] = useState<DataMasuk[]>([]);
-  const [editData, setEditData] = useState<DataMasuk>({
-    idbarang: '',
-    idsupplier: '',
-    tanggal: '',
-    nama_barang: '',
-    keterangan: '',
-    nama_supplier: '',
-    konfir_jumlah: 0,
-    penerima: '',
-  });
-  const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const router = useRouter();
   const [loggedIn, setLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
@@ -112,10 +84,6 @@ const App: React.FC = () => {
     setShowEditModal(false);
   };
 
-  interface ModalFormProps {
-    onClose: () => void;
-    editData: DataMasuk;
-  }
 
   const handlePrintPDF = () => {
     const doc = new jsPDF();
@@ -153,42 +121,6 @@ const App: React.FC = () => {
     doc.save('data_barang_masuk.pdf');
   };
 
-  async function fetchAllMasuk() {
-    const res = await fetch('http://localhost:3700/masuk', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataMasuk(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
-
-  const handleDelete = async (idbarang: string | null) => {
-    if (idbarang) {
-      try {
-        const response = await fetch(`http://localhost:3700/masuk/${idbarang}`, {
-          method: 'DELETE',
-        });
-
-        if (response.ok) {
-          const updatedDataMasuk = dataMasuk.filter(
-            (data) => data.idbarang !== idbarang
-          );
-          setDataMasuk(updatedDataMasuk);
-          message.success('Data Berhasil Dihapus');
-        } else {
-          message.error('Data Gagal Dihapus');
-        }
-      } catch (error) {
-        alert('Terjadi kesalahan saat menghapus data');
-      }
-    }
-  };
-
   const handleDeleteConfirmation = () => {
     Modal.confirm({
       title: 'Hapus Data',
@@ -196,8 +128,7 @@ const App: React.FC = () => {
       okText: 'Ya',
       okType: 'danger',
       cancelText: 'Batal',
-
-      
+      onOk: () => message.success('Data Berhasil Dihapus')
     });
   };
 
@@ -261,7 +192,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-end">
                   <div className="relative font-medium right-10">
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      <a className="ant-dropdown-link">
                         Administrator ▾
                       </a>
                     </Dropdown>
@@ -286,8 +217,8 @@ const App: React.FC = () => {
                 </button>
               </div>
             </div>
-            {showTambahModal && <TambahMasukModal onClose={handleCloseTambahModal} supplier={[]} />}
-            {showEditModal && <EditMasukModal onClose={handleCloseEditModal} editData={editData} />}
+            {showTambahModal && <TambahMasukModal onClose={handleCloseTambahModal} />}
+            {showEditModal && <EditMasukModal onClose={handleCloseEditModal} />}
             <div className='overflow-x-auto'>
             <div>
             <table className='w-full min-w-[800px]'>

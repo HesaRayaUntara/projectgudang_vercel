@@ -3,18 +3,10 @@ import { CloseOutlined } from '@ant-design/icons';
 
 interface ModalFormProps {
   onClose: () => void;
-  editData: {
-    idbarang: string;
-    nama_barang: string;
-    penerima: string;
-    keterangan: string;
-  };
 }
 
-const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
-  const [updatedData, setUpdatedData] = useState(editData);
+const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   const [showModal, setShowModal] = useState(false);
-  const [CloseModal, setCloseModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -36,7 +28,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
 
     setTimeout(() => {
       setShowModal(true);
-      setCloseModal(true);
     }, 1); 
 
   }, []);
@@ -62,15 +53,15 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
             </div>
             <div className="p-4">
               <div className='font-semibold mb-2'><label htmlFor="nama">Nama Barang</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border text-gray-600' type="text" id="nama" name="nama" placeholder='Nama Barang' value={updatedData.nama_barang} readOnly required onChange={(e) => setUpdatedData({ ...updatedData, nama_barang: e.target.value })}/>
+              <input className='w-full p-2 rounded bg-stone-50 border text-gray-600' type="text" id="nama" name="nama" placeholder='Nama Barang' readOnly required/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="alamat">Penerima</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="penerima" name="penerima" placeholder='Penerima' value={updatedData.penerima} required onChange={(e) => setUpdatedData({ ...updatedData, penerima: e.target.value })}/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="penerima" name="penerima" placeholder='Penerima' required/>
             </div>
             <div className="p-4 -mt-6" >
               <div className='font-semibold mb-2'><label htmlFor="keterangan">Keterangan (opsional)</label></div>
-              <textarea className="w-full p-3 rounded bg-stone-50 border" id="keterangan" name="keterangan" placeholder="" style={{ resize: "none", height: "100px" }} value={updatedData.keterangan} onChange={(e) => setUpdatedData({ ...updatedData, keterangan: e.target.value })}></textarea>
+              <textarea className="w-full p-3 rounded bg-stone-50 border" id="keterangan" name="keterangan" placeholder="" style={{ resize: "none", height: "100px" }}></textarea>
             </div>
             <div className="p-4 text-right -mt-6">
               <button type="submit" className="bg-green-500 text-white p-2 px-4 rounded hover:bg-green-600">

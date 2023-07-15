@@ -7,12 +7,6 @@ import moment from 'moment';
 
 interface ModalFormProps {
   onClose: () => void;
-  supplier: DataSupplier[];
-}
-
-interface DataSupplier {
-  idsupplier: string;
-  nama_supplier: string;
 }
 
 const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
@@ -21,9 +15,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   const [jumlah, setJumlah] = useState(0);
   const [konfirJumlah, setKonfirJumlah] = useState(0);
   const [namaSupplier, setNamaSupplier] = useState('');
-  const [supplierData, setSupplierData] = useState<DataSupplier[]>([]);
   const [showModal, setShowModal] = useState(false);
-  const [CloseModal, setCloseModal] = useState(false);
   const { Option } = Select;
   const { RangePicker } = DatePicker;
 
@@ -51,7 +43,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
 
     setTimeout(() => {
       setShowModal(true);
-      setCloseModal(true);
     }, 1);
 
   }, []);
@@ -134,7 +125,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
                 </div>
                 <div className="p-4 -mt-6 h-3/4" style={{ height: "68.6%" }}>
                   <div className='font-semibold mb-2.5'><label htmlFor="keterangan">Keterangan (opsional)</label></div>
-                  <textarea className="w-full p-3 rounded bg-stone-50 border" id="keterangan" name="keterangan" placeholder="" style={{ resize: "none", height: "100%" }} onChange={(e) => setKeterangan(e.target.value)}></textarea>
+                  <textarea className="w-full p-3 rounded bg-stone-50 border" id="keterangan" name="keterangan" placeholder="" style={{ resize: "none", height: "100%" }}></textarea>
                 </div>
               </div>
             </div>

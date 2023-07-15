@@ -31,17 +31,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
     handleTambahBarang();
   };
 
-  const handleNamaSupplierChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    const firstLetterUppercase = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
-  
-    if (inputValue === firstLetterUppercase) {
-      setNamaSupplier(inputValue);
-    } else {
-      alert('Gunakan huruf kapital pada huruf depan');
-    }
-  };
-
   useEffect(() => {
 
     setTimeout(() => {
@@ -80,15 +69,15 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
             </div>
             <div className="p-4">
               <div className='font-semibold mb-2'><label htmlFor="nama">Nama Supplier</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="nama" name="nama" value={namaSupplier} onChange={handleNamaSupplierChange} required/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="nama" name="nama" required/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="alamat">Alamat</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="alamat" name="alamat" value={alamat} onChange={(e) => setAlamat(e.target.value)} required/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="alamat" name="alamat" required/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="telepon">Telepon</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="telepon" name="telepon" maxLength={15} onChange={(e) => setTelepon(e.target.value)} required/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="telepon" name="telepon" maxLength={15} required/>
             </div>
               <div className="p-4 text-right -mt-5">
               <button type="submit" className="bg-blue-500 text-white p-2 px-4 rounded hover:bg-blue-600">

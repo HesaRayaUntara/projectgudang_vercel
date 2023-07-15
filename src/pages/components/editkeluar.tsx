@@ -57,7 +57,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
               </div>
               <div className="p-4 -mt-6">
                 <div className='font-semibold mb-2'><label htmlFor="penerima">Penerima</label></div>
-                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" value="penerima" required />
+                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" placeholder='Penerima' required />
               </div>
             </div>
             <div className="p-6 text-right -mt-9">

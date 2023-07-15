@@ -3,24 +3,12 @@ import { CloseOutlined } from '@ant-design/icons';
 import { Select, Space, DatePicker, message } from 'antd';
 import moment from 'moment';
 
-interface DataMasuk {
-  jumlah: number;
-  idbarang: string;
-  nama_barang: string;
-}
-
 interface TambahKeluarModalProps {
   onClose: () => void;
-  masuk: DataMasuk[];
 }
 
 const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
   const [namaBarang, setNamaBarang] = useState('');
-  const [jumlah, setJumlah] = useState<number | ''>('');
-  const [penerima, setPenerima] = useState('');
-  const [tanggal, setTanggal] = useState<any>(null);
-  const [masuk, setMasuk] = useState<DataMasuk[]>([]);
-  const [idBarang, setIdBarang] = useState('');
   const [showModal, setShowModal] = useState(false);
   const { Option } = Select;
 
@@ -41,21 +29,11 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
   }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3700/masuk');
-        const data = await response.json();
-        setMasuk(data);
-      } catch (error) {
-        console.log('Terjadi kesalahan saat mengambil data masuk');
-      }
-    };
 
     setTimeout(() => {
       setShowModal(true);
     }, 1); 
 
-    fetchData();
   }, []);
 
   const handleClose = () => {
@@ -65,23 +43,9 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
     }, 500);
   };
 
-
   const handleSubmit = (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
     handleTambahBarang();
-  };
-
-  const handleNamaBarangChange = (value: string) => {
-    setNamaBarang(value);
-  
-    const selectedSupply = masuk.find((item) => item.nama_barang === value);
-    if (selectedSupply) {
-      setIdBarang(selectedSupply.idbarang);
-    }
-  };
-
-  const handleDatePickerChange = (date: any, dateString: string) => {
-    setTanggal(date);
   };
 
   return (
@@ -102,7 +66,6 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
                     <Select
                       placeholder="Pilih Barang"
                       style={{ width: 380 }}
-                      onChange={handleNamaBarangChange}
                       id='nama'
                       value={namaBarang || undefined}
                     >
@@ -123,11 +86,11 @@ const TambahKeluarModal: React.FC<TambahKeluarModalProps> = ({ onClose}) => {
               </div>
               <div className="p-4 -mt-6">
                 <div className='font-semibold mb-2'><label htmlFor="jumlah">Jumlah</label></div>
-                <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" value={jumlah} onChange={(e) => setJumlah(Number(e.target.value))} required />
+                <input className="w-full p-2 rounded bg-stone-50 border" type="number" id="jumlah" name="jumlah" min="1" required />
               </div>
               <div className="p-4 -mt-6">
                 <div className='font-semibold mb-2'><label htmlFor="penerima">Penerima</label></div>
-                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" value={penerima} onChange={(e) => setPenerima(e.target.value)} required />
+                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" required />
               </div>
             </div>
             <div className="p-6 text-right -mt-9">

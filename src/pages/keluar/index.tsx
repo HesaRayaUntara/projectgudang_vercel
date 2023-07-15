@@ -56,35 +56,11 @@ const items: MenuItem[] = [
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
 ];
 
-type DataKeluar = {
-  idkeluar: string;
-  idbarang: string;
-  tanggal: string;
-  nama_barang: string;
-  jumlah: number;
-  penerima: string;
-};
-
-interface DataUser {
-  name: string;
-  lastLoginAt: Date;
-}
-
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
   const [showTambahModal, setShowTambahModal] = useState(false);
   const [showEditModal, setShowEditModal] = useState(false);
-  const [dataKeluar, setDataKeluar] = useState<DataKeluar[]>([]);
-  const [editData, setEditData] = useState<DataKeluar>({
-    idbarang: '',
-    idkeluar: '',
-    tanggal: '',
-    nama_barang: '',
-    penerima: '',
-    jumlah: 0
-  });
   const [isTableEmpty, setIsTableEmpty] = useState(true);
-  const [dataUser, setDataUser] = useState<DataUser[]>([]);
   const [loggedIn, setLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
@@ -109,10 +85,6 @@ const App: React.FC = () => {
     setShowEditModal(false);
   };
 
-  interface ModalFormProps {
-    onClose: () => void;
-  }
-
   const handlePrintPDF = () => {
     const doc = new jsPDF();
   
@@ -127,10 +99,6 @@ const App: React.FC = () => {
     tableData.push(headers);
   
     // Menambahkan data dari state dataMasuk ke dalam array tabel
-    dataKeluar.forEach((item, index) => {
-      const rowData = [index + 1, item.nama_barang, item.tanggal, item.jumlah, item.penerima];
-      tableData.push(rowData);
-    });
   
     // Mencetak tabel menggunakan autoTable
     doc.autoTable({
@@ -142,26 +110,6 @@ const App: React.FC = () => {
   
     // Simpan file PDF
     doc.save('data_barang_keluar.pdf');
-  };
-
-  const handleDelete = async (idkeluar: string | null) => {
-    if (idkeluar) {
-      try {
-        const response = await fetch(`http://localhost:3700/keluar/${idkeluar}`, {
-          method: 'DELETE',
-        });
-  
-        if (response.ok) {
-          const updatedDataKeluar = dataKeluar.filter((data) => data.idkeluar !== idkeluar);
-          setDataKeluar(updatedDataKeluar);
-          message.success('Data Berhasil Dihapus');
-        } else {
-          message.error('Data Gagal Dihapus');
-        }
-      } catch (error) {
-        alert('Terjadi kesalahan saat menghapus data');
-      }
-    }
   };
 
   const handleDeleteConfirmation = () => {
@@ -233,7 +181,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-end">
                   <div className="relative font-medium right-10">
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      <a className="ant-dropdown-link">
                         Administrator ▾
                       </a>
                     </Dropdown>
@@ -259,8 +207,8 @@ const App: React.FC = () => {
               </button>
             </div>
           </div>
-            {showTambahModal && <TambahKeluarModal onClose={handleCloseTambahModal} masuk={[]} />}
-            {showEditModal && <EditKeluarModal onClose={handleCloseEditModal} editData={editData} />}
+            {showTambahModal && <TambahKeluarModal onClose={handleCloseTambahModal} />}
+            {showEditModal && <EditKeluarModal onClose={handleCloseEditModal} />}
             <div className='overflow-x-auto'>
             <div>
               <table className='w-full min-w-[800px]'>
@@ -275,36 +223,36 @@ const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                <tr>
-                        <td className='py-3 px-3 text-center border border-slate-100'>1</td>
-                        <td className="py-3 px-6 border border-slate-100" >Kebaya Encim</td>
-                        <td className="py-3 px-6 border border-slate-100">2023-06-12 11:58:04</td>
-                        <td className="py-3 px-6 border border-slate-100 w-6">60</td>
-                        <td className="py-3 px-6 border border-slate-100">Oleh-oleh Mpok Ipeh</td>
-                        <td className='py-3 px-3 border border-slate-100'>
-                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
-                            <EditOutlined />
-                          </button>
-                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
-                            <DeleteOutlined />
-                          </button>
-                        </td>
-                      </tr>
-                      <tr>
-                        <td className='py-3 px-3 text-center border border-slate-100'>2</td>
-                        <td className="py-3 px-6 border border-slate-100" >Rak Besi Susun</td>
-                        <td className="py-3 px-6 border border-slate-100">2023-06-10 15:28:46</td>
-                        <td className="py-3 px-6 border border-slate-100 w-6">40</td>
-                        <td className="py-3 px-6 border border-slate-100">TB Makmur Jaya</td>
-                        <td className='py-3 px-3 border border-slate-100'>
-                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
-                            <EditOutlined />
-                          </button>
-                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
-                            <DeleteOutlined />
-                          </button>
-                        </td>
-                      </tr>
+                  <tr>
+                    <td className='py-3 px-3 text-center border border-slate-100'>1</td>
+                    <td className="py-3 px-6 border border-slate-100" >Kebaya Encim</td>
+                    <td className="py-3 px-6 border border-slate-100">2023-06-12 11:58:04</td>
+                    <td className="py-3 px-6 border border-slate-100 w-6">60</td>
+                    <td className="py-3 px-6 border border-slate-100">Oleh-oleh Mpok Ipeh</td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='py-3 px-3 text-center border border-slate-100'>2</td>
+                    <td className="py-3 px-6 border border-slate-100" >Rak Besi Susun</td>
+                    <td className="py-3 px-6 border border-slate-100">2023-06-10 15:28:46</td>
+                    <td className="py-3 px-6 border border-slate-100 w-6">40</td>
+                    <td className="py-3 px-6 border border-slate-100">TB Makmur Jaya</td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
             </div>

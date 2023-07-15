@@ -53,20 +53,8 @@ const items: MenuItem[] = [
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
 ];
 
-
-interface DataUser {
-  name: string;
-  lastLoginAt: Date;
-}
-
-
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [totalMasuk, setTotalMasuk] = useState(0);
-  const [totalKeluar, setTotalKeluar] = useState(0);
-  const [totalSupplier, setTotalSupplier] = useState(0);
-  const [dataUser, setDataUser] = useState<DataUser[]>([]);
-  const [loggedIn, setLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
 
   const {
@@ -110,11 +98,6 @@ const App: React.FC = () => {
     );
   }
 
-  if (!loggedIn) {
-    router.replace('/login');
-    return null;
-  }
-
 
   return (
     <Layout style={{ minHeight: '100vh' }}>
@@ -132,7 +115,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-end">
                   <div className="relative font-medium right-10">
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      <a className="ant-dropdown-link">
                         Administrator ▾
                       </a>
                     </Dropdown>

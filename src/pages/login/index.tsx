@@ -3,14 +3,8 @@ import { useRouter } from "next/router";
 import React, { FormEvent, ChangeEvent } from "react";
 import { message } from "antd";
 import { EyeInvisibleOutlined, EyeOutlined } from '@ant-design/icons';
-import Link from 'next/link';
-
 
 const LoginPage = () => {
-  const [username, setUsername] = useState("");
-  const [email, setEmail] = useState("");
-  const [password, setPassword] = useState("");
-  const [exist, setExist] = useState(false);
   const router = useRouter();
   const [showPassword, setShowPassword] = useState(false);
 
@@ -39,7 +33,7 @@ const LoginPage = () => {
   return (
     <div className="flex items-center justify-center min-h-screen bg-gray-100">
       <div className="w-full max-w-md">
-        <form className="bg-white p-8 rounded shadow-md shadow-gray-400 mx-10"  onSubmit={handleSubmit}>
+        <form className="bg-white p-8 rounded shadow-md shadow-gray-400 mx-10" onSubmit={handleSubmit}>
           <h1 className="text-2xl font-semibold mb-8">Login</h1>
           <div className="mb-4">
             <div className="relative">

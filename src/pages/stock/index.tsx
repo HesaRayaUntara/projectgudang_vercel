@@ -50,27 +50,8 @@ const items: MenuItem[] = [
   getItem('Supplier', '5', <DeploymentUnitOutlined />, undefined, '/supplier'),
 ];
 
-interface DataMasuk {
-  idbarang: string;
-  idsupplier: string;
-  nama_barang: string;
-  jumlah: number;
-  nama_supplier: string;
-  keterangan: string;
-}
-
-interface DataUser {
-  name: string;
-  lastLoginAt: Date;
-}
-
 const App: React.FC = () => {
   const [collapsed, setCollapsed] = useState(false);
-  const [showEditModal, setShowEditModal] = useState(false);
-  const [dataMasuk, setDataMasuk] = useState<DataMasuk[]>([]);
-  const [editData, setEditData] = useState<DataMasuk>({ idbarang: '', idsupplier: '', nama_barang: '', keterangan: '', nama_supplier: '', jumlah: 0 });
-  const [dataUser, setDataUser] = useState<DataUser[]>([]);
-  const [loggedIn, setLoggedIn] = useState(true);
   const [isLoading, setIsLoading] = useState(true);
   
   const handlePrintPDF = () => {
@@ -87,10 +68,6 @@ const App: React.FC = () => {
   tableData.push(headers);
 
   // Menambahkan data dari state dataMasuk ke dalam array tabel
-  dataMasuk.forEach((item, index) => {
-    const rowData = [index + 1, item.nama_barang, item.jumlah, item.nama_supplier, item.keterangan];
-    tableData.push(rowData);
-  });
 
   // Mencetak tabel menggunakan autoTable
   doc.autoTable({
@@ -104,17 +81,11 @@ const App: React.FC = () => {
   doc.save('data_stock_barang.pdf');
 };
 
-  
 
   const {
     token: { colorBgContainer },
   } = theme.useToken();
   const router = useRouter();
-  
-  interface ModalFormProps {
-    onClose: () => void;
-    editData: DataMasuk;
-  }
 
 
   useEffect(() => {
@@ -170,7 +141,7 @@ const App: React.FC = () => {
                 <div className="flex items-center justify-end">
                   <div className="relative font-medium right-10">
                     <Dropdown overlay={menu} trigger={['click']}>
-                      <a className="ant-dropdown-link" onClick={(e) => e.preventDefault()}>
+                      <a className="ant-dropdown-link">
                         Administrator ▾
                       </a>
                     </Dropdown>
@@ -203,34 +174,34 @@ const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                      <tr>
-                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>1</td>
-                        <td className='py-3 px-6 border border-slate-100'>Rak Besi Susun</td>
-                        <td className='py-3 px-4 border border-slate-100'>80</td>
-                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
-                        <td className='py-3 px-6 border border-slate-100'></td>                    
-                      </tr>
-                      <tr className='bg-slate-50'>
-                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>2</td>
-                        <td className='py-3 px-6 border border-slate-100'>Kebaya Encim</td>
-                        <td className='py-3 px-4 border border-slate-100'>140</td>
-                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
-                        <td className='py-3 px-6 border border-slate-100'></td>                    
-                      </tr>
-                      <tr>
-                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>3</td>
-                        <td className='py-3 px-6 border border-slate-100'>Kasur Angin Portable</td>
-                        <td className='py-3 px-4 border border-slate-100'>40</td>
-                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
-                        <td className='py-3 px-6 border border-slate-100'>2pcs rusak</td>                    
-                      </tr>
-                      <tr className='bg-slate-50'>
-                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>4</td>
-                        <td className='py-3 px-6 border border-slate-100'>Batik Bekasi</td>
-                        <td className='py-3 px-4 border border-slate-100'>50</td>
-                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
-                        <td className='py-3 px-6 border border-slate-100'></td>                    
-                      </tr>
+                  <tr>
+                    <td className='py-3 px-6 border border-slate-100 text-center w-5'>1</td>
+                    <td className='py-3 px-6 border border-slate-100'>Rak Besi Susun</td>
+                    <td className='py-3 px-4 border border-slate-100'>80</td>
+                    <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
+                    <td className='py-3 px-6 border border-slate-100'></td>                    
+                  </tr>
+                  <tr className='bg-slate-50'>
+                    <td className='py-3 px-6 border border-slate-100 text-center w-5'>2</td>
+                    <td className='py-3 px-6 border border-slate-100'>Kebaya Encim</td>
+                    <td className='py-3 px-4 border border-slate-100'>140</td>
+                    <td className='py-3 px-6 border border-slate-100'>Rumah Batik</td>
+                    <td className='py-3 px-6 border border-slate-100'></td>                    
+                  </tr>
+                  <tr>
+                    <td className='py-3 px-6 border border-slate-100 text-center w-5'>3</td>
+                    <td className='py-3 px-6 border border-slate-100'>Kasur Angin Portable</td>
+                    <td className='py-3 px-4 border border-slate-100'>40</td>
+                    <td className='py-3 px-6 border border-slate-100'>KulBed</td>
+                    <td className='py-3 px-6 border border-slate-100'>2pcs rusak</td>                    
+                  </tr>
+                  <tr className='bg-slate-50'>
+                    <td className='py-3 px-6 border border-slate-100 text-center w-5'>4</td>
+                    <td className='py-3 px-6 border border-slate-100'>Batik Bekasi</td>
+                    <td className='py-3 px-4 border border-slate-100'>50</td>
+                    <td className='py-3 px-6 border border-slate-100'>Rumah Batik</td>
+                    <td className='py-3 px-6 border border-slate-100'></td>                    
+                  </tr>
                 </tbody>
               </table>
             </div>
