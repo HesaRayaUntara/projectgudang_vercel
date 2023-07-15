@@ -3,24 +3,10 @@ import { CloseOutlined } from '@ant-design/icons';
 
 interface ModalFormProps {
   onClose: () => void;
-  editData: {
-    idkeluar: string;
-    idbarang: string;
-    nama_barang: string;
-    penerima: string;
-  };
 }
 
-interface Masuk {
-  idbarang: string;
-  nama_barang: string;
-}
-
-const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
-  const [updatedData, setUpdatedData] = useState(editData);
-  const [masuk, setMasuk] = useState<Masuk[]>([]);
+const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   const [showModal, setShowModal] = useState(false);
-  const [CloseModal, setCloseModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
@@ -39,21 +25,11 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
     }
 
   useEffect(() => {
-    const fetchData = async () => {
-      try {
-        const response = await fetch('http://localhost:3700/masuk');
-        const data = await response.json();
-        setMasuk(data);
-      } catch (error) {
-        console.log('Terjadi kesalahan saat mengambil data nama barang');
-      }
-    };
 
     setTimeout(() => {
       setShowModal(true);
     }, 1); 
 
-    fetchData();
   }, []);
 
   const handleClose = () => {
@@ -81,7 +57,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
               </div>
               <div className="p-4 -mt-6">
                 <div className='font-semibold mb-2'><label htmlFor="penerima">Penerima</label></div>
-                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" value={updatedData.penerima} onChange={(e) => setUpdatedData({ ...updatedData, penerima: e.target.value })} required />
+                <input className="w-full p-2 rounded bg-stone-50 border" type="text" id="penerima" name="penerima" value="penerima" required />
               </div>
             </div>
             <div className="p-6 text-right -mt-9">
