@@ -14,7 +14,6 @@ import { Dropdown, MenuProps, Spin } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import Link from 'next/link';
 import router, { useRouter } from 'next/router';
-import EditStockModal from '@/pages/components/editstock';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 
@@ -111,15 +110,6 @@ const App: React.FC = () => {
     token: { colorBgContainer },
   } = theme.useToken();
   const router = useRouter();
-
-  const handleOpenEditModal = (data: DataMasuk) => {
-    setEditData(data);
-    setShowEditModal(true);
-  };
-  
-  const handleCloseEditModal = () => {
-    setShowEditModal(false);
-  };
   
   interface ModalFormProps {
     onClose: () => void;
@@ -127,73 +117,32 @@ const App: React.FC = () => {
   }
 
 
-  async function fetchAllMasuk() {
-    const res = await fetch('http://localhost:3700/masuk', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataMasuk(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-  
-  async function fetchAllUser() {
-    const res = await fetch('http://localhost:3700/auth/login', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataUser(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
   useEffect(() => {
-    fetchAllMasuk();
-    fetchAllUser();
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoggedIn(false);
-      router.push('/login');
-    } else {
-      setLoggedIn(true);
-    }
   
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoading(true);
-    setLoggedIn(false);
-    router.push('/login');
-  };
 
-  const menuItems = dataUser.map((item) => (
-    <Menu.Item key={item.name}>
+  const menuItems = (
+    <Menu.Item>
       <a className='flex items-center'>
-        <UserOutlined className='mr-1'/>{item.name}
+        <UserOutlined className='mr-1'/>Hesa
       </a>
     </Menu.Item>
-  ));
+  );
   
   const menu = (
     <Menu>
       {menuItems}
       <Menu.Divider />
-      <Menu.Item key="4" danger onClick={handleLogout}>
+      <Link href="/login">
+      <Menu.Item key="4" danger>
         <a className='flex items-center'>
           <LogoutOutlined className='mr-1'/>Log out
         </a>
       </Menu.Item>
+      </Link>
     </Menu>
   );
 
@@ -203,11 +152,6 @@ const App: React.FC = () => {
         <Spin size="large" />
       </div>
     );
-  }
-
-  if (!loggedIn) {
-    router.replace('/login');
-    return null;
   }
 
   return (
@@ -246,7 +190,6 @@ const App: React.FC = () => {
             </span>
           </button>
 
-          {showEditModal && <EditStockModal onClose={handleCloseEditModal} editData={editData} />}
           <div className='overflow-x-auto'>
             <div>
             <table className='w-full min-w-[800px]'>
@@ -260,23 +203,34 @@ const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataMasuk.length === 0 ? (
-                  <tr>
-                    <td colSpan={8} className="py-12 text-center border italic text-gray-400 border-slate-100">
-                      data belum tersedia
-                    </td>
-                  </tr>
-                  ) : (
-                    dataMasuk.map((item, index) => (
-                      <tr key={index} className={index % 2 === 1 ? 'bg-slate-50' : 'bg-white'}>
-                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>{index + 1}</td>
-                        <td className='py-3 px-6 border border-slate-100'>{item.nama_barang}</td>
-                        <td className='py-3 px-4 border border-slate-100'>{item.jumlah}</td>
-                        <td className='py-3 px-6 border border-slate-100'>{item.nama_supplier}</td>
-                        <td className='py-3 px-6 border border-slate-100'>{item.keterangan}</td>                    
+                      <tr>
+                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>1</td>
+                        <td className='py-3 px-6 border border-slate-100'>Rak Besi Susun</td>
+                        <td className='py-3 px-4 border border-slate-100'>80</td>
+                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
+                        <td className='py-3 px-6 border border-slate-100'></td>                    
                       </tr>
-                    ))
-                  )}
+                      <tr className='bg-slate-50'>
+                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>2</td>
+                        <td className='py-3 px-6 border border-slate-100'>Kebaya Encim</td>
+                        <td className='py-3 px-4 border border-slate-100'>140</td>
+                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
+                        <td className='py-3 px-6 border border-slate-100'></td>                    
+                      </tr>
+                      <tr>
+                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>3</td>
+                        <td className='py-3 px-6 border border-slate-100'>Kasur Angin Portable</td>
+                        <td className='py-3 px-4 border border-slate-100'>40</td>
+                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
+                        <td className='py-3 px-6 border border-slate-100'>2pcs rusak</td>                    
+                      </tr>
+                      <tr className='bg-slate-50'>
+                        <td className='py-3 px-6 border border-slate-100 text-center w-5'>4</td>
+                        <td className='py-3 px-6 border border-slate-100'>Batik Bekasi</td>
+                        <td className='py-3 px-4 border border-slate-100'>50</td>
+                        <td className='py-3 px-6 border border-slate-100'>PT Satu Solusi</td>
+                        <td className='py-3 px-6 border border-slate-100'></td>                    
+                      </tr>
                 </tbody>
               </table>
             </div>

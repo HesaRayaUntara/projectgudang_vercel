@@ -104,8 +104,7 @@ const App: React.FC = () => {
     setShowTambahModal(false);
   };
 
-  const handleOpenEditModal = (data: DataMasuk) => {
-    setEditData(data);
+  const handleOpenEditModal = () => {
     setShowEditModal(true);
   };
 
@@ -140,18 +139,7 @@ const App: React.FC = () => {
     tableData.push(headers);
 
     // Menambahkan data dari state dataMasuk ke dalam array tabel
-    dataMasuk.forEach((item, index) => {
-      const rowData = [
-        index + 1,
-        item.nama_barang,
-        item.tanggal,
-        item.konfir_jumlah,
-        item.penerima,
-        item.nama_supplier,
-        item.keterangan,
-      ];
-      tableData.push(rowData);
-    });
+
 
     // Mencetak tabel menggunakan autoTable
     doc.autoTable({
@@ -178,19 +166,6 @@ const App: React.FC = () => {
     }
   }
 
-  
-  async function fetchAllUser() {
-    const res = await fetch('http://localhost:3700/auth/login', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataUser(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
 
   const handleDelete = async (idbarang: string | null) => {
     if (idbarang) {
@@ -214,7 +189,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDeleteConfirmation = (idbarang: string | null) => {
+  const handleDeleteConfirmation = () => {
     Modal.confirm({
       title: 'Hapus Data',
       content: 'Apakah anda yakin ingin menghapus data ini?',
@@ -222,51 +197,37 @@ const App: React.FC = () => {
       okType: 'danger',
       cancelText: 'Batal',
 
-      onOk: () => handleDelete(idbarang),
+      
     });
   };
 
   useEffect(() => {
-    fetchAllMasuk();
-    fetchAllUser();
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoggedIn(false);
-      router.push('/login');
-    } else {
-      setLoggedIn(true);
-    }
   
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoading(true); // Set isLoading to true before logout
-    setLoggedIn(false);
-    router.push('/login');
-  };
 
-  const menuItems = dataUser.map((item) => (
-    <Menu.Item key={item.name}>
+
+  const menuItems = (
+    <Menu.Item>
       <a className='flex items-center'>
-        <UserOutlined className='mr-1'/>{item.name}
+        <UserOutlined className='mr-1'/>Hesa
       </a>
     </Menu.Item>
-  ));
+  );
   
   const menu = (
     <Menu>
       {menuItems}
       <Menu.Divider />
-      <Menu.Item key="4" danger onClick={handleLogout}>
+      <Link href="/login">
+      <Menu.Item key="4" danger>
         <a className='flex items-center'>
           <LogoutOutlined className='mr-1'/>Log out
         </a>
       </Menu.Item>
+      </Link>
     </Menu>
   );
 
@@ -343,33 +304,74 @@ const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataMasuk.length === 0 ? (
                   <tr>
-                    <td colSpan={8} className="py-12 text-center border italic text-gray-400 border-slate-100">
-                      data belum tersedia
+                    <td className='py-3 px-3 text-center border border-slate-100'>1</td>
+                    <td className='py-3 px-3 border border-slate-100'>Rak Besi Susun</td>
+                    <td className='py-3 px-3 border border-slate-100'>23-06-05 07:25:12</td>
+                    <td className='py-3 px-3 border border-slate-100 w-2'>120</td>
+                    <td className='py-3 px-3 border border-slate-100'>Alex</td>
+                    <td className='py-3 px-3 border border-slate-100'>PT Satu Solusi</td>
+                    <td className='py-3 px-3 border border-slate-100'></td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
                     </td>
                   </tr>
-                  ) : (
-                    dataMasuk.map((item, index) => (
-                      <tr key={index} className={index % 2 === 1 ? 'bg-slate-50' : 'bg-white'}>
-                        <td className='py-3 px-3 text-center border border-slate-100'>{index + 1}</td>
-                        <td className='py-3 px-3 border border-slate-100' data-idbarang={item.idbarang}>{item.nama_barang}</td>
-                        <td className='py-3 px-3 border border-slate-100'>{moment(item.tanggal).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')}</td>
-                        <td className='py-3 px-3 border border-slate-100 w-2'>{item.konfir_jumlah}</td>
-                        <td className='py-3 px-3 border border-slate-100'>{item.penerima}</td>
-                        <td className='py-3 px-3 border border-slate-100'>{item.nama_supplier}</td>
-                        <td className='py-3 px-3 border border-slate-100'>{item.keterangan}</td>
-                        <td className='py-3 px-3 border border-slate-100'>
-                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={() => handleOpenEditModal(item)}>
-                            <EditOutlined />
-                          </button>
-                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={() => handleDeleteConfirmation(item.idbarang)}>
-                            <DeleteOutlined />
-                          </button>
-                        </td>
-                      </tr>
-                    ))
-                  )}
+                  <tr>
+                    <td className='py-3 px-3 text-center border border-slate-100'>2</td>
+                    <td className='py-3 px-3 border border-slate-100'>Kebaya Encim</td>
+                    <td className='py-3 px-3 border border-slate-100'>2023-06-08 11:32:26</td>
+                    <td className='py-3 px-3 border border-slate-100 w-2'>200</td>
+                    <td className='py-3 px-3 border border-slate-100'>Juki</td>
+                    <td className='py-3 px-3 border border-slate-100'>Rumah Batik</td>
+                    <td className='py-3 px-3 border border-slate-100'></td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='py-3 px-3 text-center border border-slate-100'>3</td>
+                    <td className='py-3 px-3 border border-slate-100'>Kasur Angin Portable</td>
+                    <td className='py-3 px-3 border border-slate-100'>2023-06-06 00:45:08</td>
+                    <td className='py-3 px-3 border border-slate-100 w-2'>80</td>
+                    <td className='py-3 px-3 border border-slate-100'>Bengawan</td>
+                    <td className='py-3 px-3 border border-slate-100'>KulBed</td>
+                    <td className='py-3 px-3 border border-slate-100'>2pcs rusak</td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
+                    </td>
+                  </tr>
+                  <tr>
+                    <td className='py-3 px-3 text-center border border-slate-100'>4</td>
+                    <td className='py-3 px-3 border border-slate-100'>Batik Bekasi</td>
+                    <td className='py-3 px-3 border border-slate-100'>2023-06-07 05:45:12</td>
+                    <td className='py-3 px-3 border border-slate-100 w-2'>50</td>
+                    <td className='py-3 px-3 border border-slate-100'>Hesa</td>
+                    <td className='py-3 px-3 border border-slate-100'>Rumah Batik</td>
+                    <td className='py-3 px-3 border border-slate-100'></td>
+                    <td className='py-3 px-3 border border-slate-100'>
+                      <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                        <EditOutlined />
+                      </button>
+                      <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                        <DeleteOutlined />
+                      </button>
+                    </td>
+                  </tr>
                 </tbody>
               </table>
               </div>

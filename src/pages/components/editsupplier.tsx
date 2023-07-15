@@ -14,20 +14,14 @@ interface ModalFormProps {
 const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
   const [updatedData, setUpdatedData] = useState(editData); // Mengubah inisialisasi state
   const [showModal, setShowModal] = useState(false);
+  const [CloseModal, setCloseModal] = useState(false);
 
   const handleSubmit = async (e: React.FormEvent<HTMLFormElement>) => {
     e.preventDefault();
-    if (editData.idsupplier) {
       try {
-        const response = await fetch(`http://localhost:3700/supplier/${editData.idsupplier}`, {
-          method: 'PUT',
-          headers: {
-            'Content-Type': 'application/json',
-          },
-          body: JSON.stringify(updatedData),
-        });
+        const response = {}
 
-        if (response.ok) {
+        if (response) {
           alert('Data berhasil diubah');
           window.location.reload();
         } else {
@@ -37,8 +31,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
         alert('Terjadi kesalahan saat mengubah data');
       }
     }
-    onClose();
-  };
 
   useEffect(() => {
 
@@ -62,8 +54,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
         showModal ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-60">
-        <div className="relative bg-white w-1/3 rounded">
+      <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-50">
+        <div className="relative bg-white w-1/3 rounded ml-40">
             <button
               onClick={handleClose}
               className={`absolute top-0 right-0 p-4 transition-opacity duration-500 ${
@@ -78,11 +70,11 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose, editData }) => {
             </div>
             <div className="p-4">
               <div className='font-semibold mb-2'><label htmlFor="nama">Nama Supplier</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border text-gray-600' type="text" id="nama" name="nama" placeholder='Nama Barang' value={updatedData.nama_supplier} readOnly required onChange={(e) => setUpdatedData({ ...updatedData, nama_supplier: e.target.value })}/>
+              <input className='w-full p-2 rounded bg-stone-50 border text-gray-600' type="text" id="nama" name="nama" placeholder='Nama Supplier' value={updatedData.nama_supplier} onChange={(e) => setUpdatedData({ ...updatedData, nama_supplier: e.target.value })} readOnly required/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="alamat">Alamat</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="alamat" name="alamat" placeholder='alamat' value={updatedData.alamat} required onChange={(e) => setUpdatedData({ ...updatedData, alamat: e.target.value })}/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="Alamat" name="alamat" placeholder='Alamat' value={updatedData.alamat} required onChange={(e) => setUpdatedData({ ...updatedData, alamat: e.target.value })}/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="telepon">Telepon</label></div>

@@ -101,8 +101,7 @@ const App: React.FC = () => {
     setShowTambahModal(false);
   };
 
-  const handleOpenEditModal = (data: DataKeluar) => {
-    setEditData(data);
+  const handleOpenEditModal = () => {
     setShowEditModal(true);
   };
 
@@ -112,7 +111,6 @@ const App: React.FC = () => {
 
   interface ModalFormProps {
     onClose: () => void;
-    editData: DataKeluar;
   }
 
   const handlePrintPDF = () => {
@@ -146,33 +144,6 @@ const App: React.FC = () => {
     doc.save('data_barang_keluar.pdf');
   };
 
-  async function fetchAllKeluar() {
-    const res = await fetch('http://localhost:3700/keluar', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data: DataKeluar[] = await res.json();
-      setDataKeluar(data);
-      setIsTableEmpty(data.length === 0);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
-  async function fetchAllUser() {
-    const res = await fetch('http://localhost:3700/auth/login', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataUser(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
   const handleDelete = async (idkeluar: string | null) => {
     if (idkeluar) {
       try {
@@ -193,7 +164,7 @@ const App: React.FC = () => {
     }
   };
 
-  const handleDeleteConfirmation = (idkeluar: string | null) => {
+  const handleDeleteConfirmation = () => {
     Modal.confirm({
       title: 'Hapus Data',
       content: 'Apakah anda yakin ingin menghapus data ini?',
@@ -203,21 +174,11 @@ const App: React.FC = () => {
       okButtonProps: {
         className: ' text-white',
       },
-      onOk: () => handleDelete(idkeluar),
+      onOk: () => message.success('Data Berhasil Dihapus')
     });
   };
 
   useEffect(() => {
-    fetchAllKeluar();
-    fetchAllUser();
-
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoggedIn(false);
-      router.push('/login');
-    } else {
-      setLoggedIn(true);
-    }
   
     // Simulating the component loading process
     setTimeout(() => {
@@ -225,30 +186,26 @@ const App: React.FC = () => {
     }, 1000);
   }, []);
   
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoading(true); // Set isLoading to true before logout
-    setLoggedIn(false);
-    router.push('/login');
-  };
 
-  const menuItems = dataUser.map((item) => (
-    <Menu.Item key={item.name}>
+  const menuItems = (
+    <Menu.Item>
       <a className='flex items-center'>
-        <UserOutlined className='mr-1'/>{item.name}
+        <UserOutlined className='mr-1'/>Hesa
       </a>
     </Menu.Item>
-  ));
+  );
   
   const menu = (
     <Menu>
       {menuItems}
       <Menu.Divider />
-      <Menu.Item key="4" danger onClick={handleLogout}>
+      <Link href="/login">
+      <Menu.Item key="4" danger>
         <a className='flex items-center'>
           <LogoutOutlined className='mr-1'/>Log out
         </a>
       </Menu.Item>
+      </Link>
     </Menu>
   );
 
@@ -258,11 +215,6 @@ const App: React.FC = () => {
         <Spin size="large" />
       </div>
     );
-  }
-
-  if (!loggedIn) {
-    router.replace('/login');
-    return null;
   }
 
   return (
@@ -323,31 +275,36 @@ const App: React.FC = () => {
                   </tr>
                 </thead>
                 <tbody>
-                  {dataKeluar.length === 0 ? (
-                  <tr>
-                    <td colSpan={6} className="py-12 text-center border italic text-gray-400 border-slate-100">
-                      data belum tersedia
-                    </td>
-                  </tr>
-                  ) : (
-                    dataKeluar.map((item, index) => (
-                      <tr key={index} className={index % 2 === 1 ? 'bg-slate-50' : 'bg-white'}>
-                        <td className='py-3 px-3 text-center border border-slate-100'>{index + 1}</td>
-                        <td className="py-3 px-6 border border-slate-100" data-idkeluar={item.idkeluar}>{item.nama_barang}</td>
-                        <td className="py-3 px-6 border border-slate-100">{moment(item.tanggal).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')}</td>
-                        <td className="py-3 px-6 border border-slate-100 w-6">{item.jumlah}</td>
-                        <td className="py-3 px-6 border border-slate-100">{item.penerima}</td>
+                <tr>
+                        <td className='py-3 px-3 text-center border border-slate-100'>1</td>
+                        <td className="py-3 px-6 border border-slate-100" >Kebaya Encim</td>
+                        <td className="py-3 px-6 border border-slate-100">2023-06-12 11:58:04</td>
+                        <td className="py-3 px-6 border border-slate-100 w-6">60</td>
+                        <td className="py-3 px-6 border border-slate-100">Oleh-oleh Mpok Ipeh</td>
                         <td className='py-3 px-3 border border-slate-100'>
-                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={() => handleOpenEditModal(item)}>
+                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
                             <EditOutlined />
                           </button>
-                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={() => handleDeleteConfirmation(item.idkeluar)}>
+                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
                             <DeleteOutlined />
                           </button>
                         </td>
                       </tr>
-                    ))
-                  )}
+                      <tr>
+                        <td className='py-3 px-3 text-center border border-slate-100'>2</td>
+                        <td className="py-3 px-6 border border-slate-100" >Rak Besi Susun</td>
+                        <td className="py-3 px-6 border border-slate-100">2023-06-10 15:28:46</td>
+                        <td className="py-3 px-6 border border-slate-100 w-6">40</td>
+                        <td className="py-3 px-6 border border-slate-100">TB Makmur Jaya</td>
+                        <td className='py-3 px-3 border border-slate-100'>
+                          <button className="bg-yellow-500 text-white p-0.5 px-2 pb-2 rounded mr-1 hover:bg-yellow-600" onClick={handleOpenEditModal}>
+                            <EditOutlined />
+                          </button>
+                          <button className="bg-red-500 text-white p-0.5 px-2 pb-2 rounded hover:bg-red-600" onClick={handleDeleteConfirmation}>
+                            <DeleteOutlined />
+                          </button>
+                        </td>
+                      </tr>
                 </tbody>
               </table>
             </div>

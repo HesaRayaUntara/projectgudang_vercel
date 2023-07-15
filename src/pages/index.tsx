@@ -15,7 +15,6 @@ import { Dropdown, MenuProps, Modal, Spin } from 'antd';
 import { Breadcrumb, Layout, Menu, theme } from 'antd';
 import Link from 'next/link';
 import router, { useRouter } from 'next/router';
-import EditStockModal from '@/pages/components/editstock';
 import jsPDF from 'jspdf';
 import 'jspdf-autotable';
 import moment from 'moment';
@@ -75,101 +74,27 @@ const App: React.FC = () => {
   } = theme.useToken();
   const router = useRouter();
 
-
-  async function fetchAllMasuk() {
-    const res = await fetch('http://localhost:3700/masuk', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setTotalMasuk(data.length);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
-
-  async function fetchAllKeluar() {
-    const res = await fetch('http://localhost:3700/keluar', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setTotalKeluar(data.length);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
-
-  async function fetchAllSupplier() {
-    const res = await fetch('http://localhost:3700/supplier', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setTotalSupplier(data.length);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
-  async function fetchAllUser() {
-    const res = await fetch('http://localhost:3700/auth/login', {
-      method: 'GET',
-    });
-    if (res.ok) {
-      const data = await res.json();
-      setDataUser(data);
-      console.log(data);
-    } else {
-      alert('error fetching');
-    }
-  }
-
   useEffect(() => {
-    fetchAllMasuk();
-    fetchAllKeluar();
-    fetchAllSupplier();
-    fetchAllUser();
 
-    const token = localStorage.getItem('token');
-    if (!token) {
-      setLoggedIn(false);
-      router.push('/login');
-    } else {
-      setLoggedIn(true);
-    }
-  
     // Simulating the component loading process
     setTimeout(() => {
       setIsLoading(false);
     }, 1000);
   }, []);
-  
-  const handleLogout = () => {
-    localStorage.removeItem('token');
-    setIsLoading(true); // Set isLoading to true before logout
-    setLoggedIn(false);
-    router.push('/login');
-  };
 
-  const menuItems = dataUser.map((item) => (
-    <Menu.Item key={item.name}>
+  const menuItems = (
+    <Menu.Item>
       <a className='flex items-center'>
-        <UserOutlined className='mr-1'/>{item.name}
+        <UserOutlined className='mr-1'/>Hesa
       </a>
     </Menu.Item>
-  ));
+  );
   
   const menu = (
     <Menu>
       {menuItems}
       <Menu.Divider />
-      <Menu.Item key="4" danger onClick={handleLogout}>
+      <Menu.Item key="4" danger>
         <a className='flex items-center'>
           <LogoutOutlined className='mr-1'/>Log out
         </a>
@@ -224,7 +149,7 @@ const App: React.FC = () => {
                       <div className="bg-blue-400 p-4 rounded shadow relative text-white">
                         <div className="flex">
                           <div className="flex-grow">
-                            <h3 className="text-4xl font-semibold mb-3">{totalMasuk}</h3>
+                            <h3 className="text-4xl font-semibold mb-3">4</h3>
                             <p>Jenis Barang</p>
                           </div>
                           <div>
@@ -246,7 +171,7 @@ const App: React.FC = () => {
                       <div className="bg-yellow-400 p-4 rounded shadow relative text-white">
                         <div className="flex">
                           <div className="flex-grow">
-                            <h3 className="text-4xl font-semibold mb-3">{totalMasuk}</h3>
+                            <h3 className="text-4xl font-semibold mb-3">4</h3>
                             <p>Barang Masuk</p>
                           </div>
                           <div>
@@ -268,7 +193,7 @@ const App: React.FC = () => {
                       <div className="bg-red-500 p-4 rounded shadow relative text-white">
                         <div className="flex">
                           <div className="flex-grow">
-                            <h3 className="text-4xl font-semibold mb-3">{totalKeluar}</h3>
+                            <h3 className="text-4xl font-semibold mb-3">2</h3>
                             <p>Data Barang keluar</p>
                           </div>
                           <div>
@@ -290,7 +215,7 @@ const App: React.FC = () => {
                       <div className="bg-green-500 p-4 rounded shadow relative text-white">
                         <div className="flex">
                           <div className="flex-grow">
-                            <h3 className="text-4xl font-semibold mb-3">{totalSupplier}</h3>
+                            <h3 className="text-4xl font-semibold mb-3">3</h3>
                             <p>Supplier</p>
                           </div>
                           <div>
@@ -318,18 +243,16 @@ const App: React.FC = () => {
                             </div>
                           </div>
                           <div>
-                            {dataUser.map((item) => (
                             <table>
                               <tr>
                                 <td className="border border-gray-100 px-2 py-2 font-bold w-40">Username</td>
-                                <td className="border border-gray-100 px-3 py-2 w-96">{item.name}</td>
+                                <td className="border border-gray-100 px-3 py-2 w-96">Hesa</td>
                               </tr>
                               <tr>
                                 <td className="border border-gray-100 px-2 py-2 font-bold w-40">Terakhir Login</td>
-                                <td className="border border-gray-100 px-3 py-2 w-96">{moment(item.lastLoginAt).tz('Asia/Jakarta').format('YYYY-MM-DD HH:mm:ss')}</td>
+                                <td className="border border-gray-100 px-3 py-2 w-96">2023-06-12 23:01:43</td>
                               </tr>
                             </table>
-                            ))}
                         </div>
                       </div>
                     </div>

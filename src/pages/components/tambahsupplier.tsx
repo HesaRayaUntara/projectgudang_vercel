@@ -13,24 +13,13 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   
   const handleTambahBarang = async () => {
     try {
-      const response = await fetch('http://localhost:3700/supplier', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          nama_supplier: namaSupplier,
-          alamat: alamat,
-          telepon: telepon,
-        }),
-      });
 
-      if (response.ok) {
+      const response = {}
+
+      if (response) {
         alert('Data berhasil ditambah');
         onClose();
         window.location.reload();
-      } else {
-        alert('Data gagal ditambah');
       }
     } catch (error) {
       alert('Terjadi kesalahan saat menambah data');
@@ -48,17 +37,6 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
   
     if (inputValue === firstLetterUppercase) {
       setNamaSupplier(inputValue);
-    } else {
-      alert('Gunakan huruf kapital pada huruf depan');
-    }
-  };
-  
-  const handleAlamatChange = (e: React.ChangeEvent<HTMLInputElement>) => {
-    const inputValue = e.target.value;
-    const firstLetterUppercase = inputValue.charAt(0).toUpperCase() + inputValue.slice(1);
-  
-    if (inputValue === firstLetterUppercase) {
-      setAlamat(inputValue);
     } else {
       alert('Gunakan huruf kapital pada huruf depan');
     }
@@ -86,8 +64,8 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
         showModal ? 'opacity-100' : 'opacity-0'
       }`}
     >
-      <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-60">
-        <div className="relative bg-white w-1/3 rounded">
+      <div className="flex items-center justify-center min-h-screen bg-black bg-opacity-50">
+        <div className="relative bg-white w-1/3 rounded ml-40">
         <button
               onClick={handleClose}
               className={`absolute top-0 right-0 p-4 transition-opacity duration-500 ${
@@ -106,7 +84,7 @@ const ModalForm: React.FC<ModalFormProps> = ({ onClose }) => {
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="alamat">Alamat</label></div>
-              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="alamat" name="alamat" value={alamat} onChange={handleAlamatChange}/>
+              <input className='w-full p-2 rounded bg-stone-50 border' type="text" id="alamat" name="alamat" value={alamat} onChange={(e) => setAlamat(e.target.value)} required/>
             </div>
             <div className="p-4 -mt-6">
               <div className='font-semibold mb-2'><label htmlFor="telepon">Telepon</label></div>
